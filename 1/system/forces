@@ -1,0 +1,12 @@
+//  calculate forces and moment
+
+type        forces;
+libs        ("libforcesFunctionObjects.so");
+patches     (bottom);
+p           p;
+U           U;
+rho         rho;
+outputControl timeStep;
+outputInterval 1;
+log         true;
+

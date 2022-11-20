@@ -1,0 +1,45 @@
+./Allclean
+
+cd "${0%/*}" || exit 1                              # Run from this directory
+. ${WM_PROJECT_DIR:?}/bin/tools/RunFunctions      # Tutorial run functions
+
+restore0Dir
+
+exec="prepareCase.sh"
+
+if [ -x "$exec" ]
+then
+    . $exec
+else
+    echo "The file $WAVES_DIR/bin/prepareCase.sh is not executable."
+    echo "Make the file executable before continuing."
+    echo
+    echo "Exiting tutorial case."
+    exit 1
+fi
+
+runApplication fluentMeshToFoam fluent.msh
+runApplication transformPoints -scale '(1 1 0.1)'
+runApplication changeDictionary
+sed -i '32d' constant/polyMesh/boundary
+
+# runApplication topoSet
+
+# Create the wave probes
+runApplication waveGaugesNProbes
+
+# Compute the wave parameters
+runApplication setWaveParameters  #该函数从constant/waveProperties.input中读取参数，并计算derived参数，写出到
+				  #constant/waveProperties中
+
+# Set the wave field
+runApplication setWaveField
+
+runApplication decomposePar
+
+runParallel waveFoam
+
+runApplication reconstructPar
+
+touch wave_tank.foam
+
