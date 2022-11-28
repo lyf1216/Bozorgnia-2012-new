@@ -1,0 +1,18 @@
+rm -rf logs
+
+#生成各个数据的log文件
+foamLog log.waveFoam
+
+#处理Courant number数据
+sed -i '1d' logs/CourantMax_0  #全局max Courant文件
+sed -i '1d' logs/CourantMax_1  #界面max Courant文件
+sed -i '1d' logs/CourantMean_0  #全局mean Courant文件
+sed -i '1d' logs/CourantMean_1  #界面mean Courant文件
+
+#处理残差数据
+
+
+
+
+
+
