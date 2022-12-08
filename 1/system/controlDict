@@ -64,35 +64,74 @@ functions
         writeInternal   1;
         patches         (WALL);
         //rho             rhoInf;         //对于单相不可压缩流可用
-                                        //对于多相不设置
+                                          //对于多相不设置
 
         p               p_rgh;
         log             yes;
         //rhoInf          1;              //不可压缩流的密度
-        CofR            (0 0 0);        //弯矩计算的原点
+        CofR            (0 0 0);          //弯矩计算的原点
     }
-/*
+
     yPlus1
     {
         // Mandatory entries (unmodifiable)
         type            yPlus;
-        libs            (fieldFunctionObjects);
+        libs            (MyfieldFunctionObjects);
 
         // Optional (inherited) entries
         writePrecision  6;
-        writeToFile     false;
+        writeToFile     true;
         useUserTime     true;
         region          region0;
         enabled         true;
         log             true;
-        timeStart       0;
-        timeEnd         1000;
+        //timeStart       0;
+        //timeEnd         1000;
         executeControl  timeStep;
         executeInterval 1;
         writeControl    timeStep;
         writeInterval   1;
     }
- */   
+
+    // yPlus_max
+    // {
+    //     // Mandatory entries (unmodifiable)
+    //     type            surfaceFieldValue;
+    //     libs            (fieldFunctionObjects);
+
+    //     // Mandatory entries (runtime modifiable)
+    //     fields          (<field1> <field2> ... <fieldN>);
+    //     operation       max;
+    //     regionType      patch;
+    //     name            WALL;
+
+    //     // Optional entries (runtime modifiable)
+    //     // postOperation   none;
+    //     // weightField     alpha1;
+    //     // scaleFactor     1.0;
+    //     // writeArea       false;
+    //     // surfaceFormat   none;
+
+    //     // Optional (inherited) entries
+    //     // writeFields     false;
+    //     // scalingFactor   1.0;
+    //     // writePrecision  8;
+    //     // writeToFile     true;
+    //     // useUserTime     true;
+    //     // region          region0;
+    //     // enabled         true;
+    //     // log             true;
+    //     // timeStart       0;
+    //     // timeEnd         1000;
+    //     executeControl  writeTime;
+    //     executeInterval 1;
+    //     writeControl    writeTime;
+    //     writeInterval   1;
+    // }
+    
+
+
+
 }
 
 // ************************************************************************* //
