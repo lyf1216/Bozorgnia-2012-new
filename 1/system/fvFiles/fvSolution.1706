@@ -16,25 +16,35 @@ FoamFile
 
 solvers
 {
-    "alpha.water.*"
+    "alpha.water.*"	//alphaEqn的求解设置
     {
-        nAlphaCorr      1;
-        nAlphaSubCycles 1;
-        alphaOuterCorrectors yes;
-        cAlpha          1;
+        nAlphaCorr      1;  //MULES修正次数
+            
+        nAlphaSubCycles 1;  //相分数方程求解的子循环次数，1表示不采用子循环，大于1则每个时间步
+                            //内求解n次相分数方程，且每次的时间步长为dT/n
+            
+        cAlpha          1;  //计算压缩项通量的参数，用于控制压缩项通量的大小
 
-        MULESCorr       yes;
-        nLimiterIter    3;
+        MULESCorr       yes;    //用于控制是否采用MULES修正
+                                //若为true则首先求解原始的VOF方程，随后进行MULES显式修正
+                                //若为false则直接采用MULES显式求解
+            
+        nLimiterIter    3;  //MULES求解器中循环计算lambda的次数
 
-        solver          smoothSolver;
-        smoother        symGaussSeidel;
-        tolerance       1e-8;
-        relTol          0;
+        solver          smoothSolver;    //Tutorials中采用的包括smoothSolver(38)、PBiCG(2)、PBiCGStab(2)
+        smoother        symGaussSeidel;  //Tutorials中采用的包括symGaussSeidel(37)、GaussSeidel(1)
+        tolerance       1e-8;            //容差		 
+        relTol          0;               //0表示不采用相对容差判断收敛
+        
+        //maxIter	1000;   //最大迭代次数，默认取为1000
+        //minIter	3;      //最小迭代次数，默认取为0
+        //nSweeps	5;	    //Jacobi迭代的迭代次数，默认取为1
     }
 
-    pcorr GAMG
+    "pcorr.*"		    //pcorr为通量修正方程的变量，GAMG为多网格方法
     {
-        tolerance        1e-7;
+        solver		     GAMG;	    
+	    tolerance        1e-7;  
         relTol           0.0;
 
         smoother         DIC;//GaussSeidel;
@@ -48,9 +58,10 @@ solvers
         mergeLevels      1;
     };
 
-    pcorrFinal GAMG
+    p_rgh
     {
-        tolerance        1e-7;
+        solver		     GAMG;
+	    tolerance        1e-7;
         relTol           0.0;
 
         smoother         DIC;//GaussSeidel;
@@ -64,24 +75,9 @@ solvers
         mergeLevels      1;
     };
 
-    p_rgh GAMG
+    p_rghFinal
     {
-        tolerance        1e-7;
-        relTol           0.0;
-
-        smoother         DIC;//GaussSeidel;
-        nPreSweeps       0;
-        nPostSweeps      2;
-        nFinestSweeps    2;
-
-        cacheAgglomeration true;
-        nCellsInCoarsestLevel 10;
-        agglomerator     faceAreaPair;
-        mergeLevels      1;
-    };
-
-    p_rghFinal GAMG
-    {
+	    solver		 GAMG;
         tolerance        1e-8;
         relTol           0.0;
 
@@ -96,24 +92,19 @@ solvers
         mergeLevels      1;
     };
 
-    U PBiCG
+    U
     {
-        preconditioner   DILU;
+        solver	         PBiCG;
+	    preconditioner   DILU;
         tolerance        1e-09;
         relTol           0;
     };
 
-    UFinal PBiCG
+    UFinal
     {
-        preconditioner   DILU;
+        solver		 PBiCG;
+	    preconditioner   DILU;
         tolerance        1e-09;
-        relTol           0;
-    };
-
-    gamma PBiCG
-    {
-        preconditioner   DILU;
-        tolerance        1e-07;
         relTol           0;
     };
 }
@@ -121,26 +112,35 @@ solvers
 
 PIMPLE 
 { 
-    momentumPredictor yes;
-    nOuterCorrectors 5; 
-    nCorrectors     3;
-    nNonOrthogonalCorrectors 1;
+    momentumPredictor yes;  //控制是否求解动量预测步：no(37), yes(4)
+    nOuterCorrectors 5;     //控制pimple loop的次数 
+    nCorrectors     3;      //控制piso loop的次数
+    nNonOrthogonalCorrectors 1;  //控制非正交修正的次数，注意循环次数=1+非正交修正次数
+    				             //用于pEqn方程求解、通量修正中pcorrEqn求解
 
-    residualControl
+    residualControl  //控制initial residual
     {
 	    U
 	    {
-		    tolerance  1e-3;
+		    tolerance   1e-3;
 		    relTol      0;
 	    }
+	    
+	    pcorr
+	    {
+		    tolerance   1e-3;
+		    relTol      0;
+	    }
+
 	    p_rgh
 	    {
-		    tolerance  1e-3;
+		    tolerance   1e-3;
 		    relTol      0;
 	    }
+	    
 	    alpha.water
 	    {
-		    tolerance  1e-3;
+		    tolerance   1e-3;
 		    relTol      0;
 	    }
     }

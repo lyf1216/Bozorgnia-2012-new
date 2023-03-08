@@ -23,26 +23,32 @@ gradSchemes
 {
 //    default	cellLimited fourth 1;
     default         Gauss linear;
-    grad(U)         Gauss linear;
-    grad(alpha1)     Gauss linear;
+    grad(U)         Gauss linear;     //UEqn中湍流应力项
+    grad(alpha1)     Gauss linear;    //表面张力项、压缩项通量
 }
 
 divSchemes
 {
 //    default	    Gauss linear;
-    div(rhoPhi,U)  Gauss limitedLinearV 1;
+    div(rhoPhi,U)  Gauss limitedLinearV 1;	//UEqn中平流项，limitedLinearV属于limited插值方法，采用
+    						//limitedLinear lilmiter，其中1用于计算该limiter
 //    div(phi,gamma)  Gauss vanLeer;
 //    div(rho*phi,U)  Gauss MUSCL;
 //    div((muEff*dev(T(grad(U))))) Gauss linear;
-    div(((rho*nuEff)*dev2(T(grad(U))))) Gauss linear;
-    div(phi,alpha)  Gauss MUSCL;
-    div(phirb,alpha) Gauss interfaceCompression;
+    div(((rho*nuEff)*dev2(T(grad(U))))) Gauss linear;    //UEqn中湍流应力项
+
+    div(phi,alpha)  Gauss MUSCL;		//alphaEqn中高阶方法计算平流项通量，MUSCL属于limited插值方法，采用
+						//MUSCL limiter    
+    
+    div(phirb,alpha) Gauss interfaceCompression;  //alphaEqn中高阶方法计算压缩项通量，interfaceCompression属于
+    						  //limited插值方法，采用interfaceCompression limiter
+    
 //    div(rhoPhi,U)   Gauss limitedLinearV 1;
 }
 
 laplacianSchemes
 {
-    default         Gauss linear corrected;
+    default         Gauss linear corrected;   //linear表示表面插值方法，corrected表示表面法向梯度的正交修正方法
 }
 
 interpolationSchemes
@@ -52,7 +58,7 @@ interpolationSchemes
 
 snGradSchemes
 {
-    default         corrected;
+    default         corrected;	//正交修正方法
 }
 
 fluxRequired
@@ -63,4 +69,5 @@ fluxRequired
     alpha.water;
 }
 
-// ************************************************************************* //
+// *******************************************
+//****************************** //

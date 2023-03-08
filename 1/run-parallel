@@ -26,20 +26,20 @@ sed -i '32d' constant/polyMesh/boundary
 # runApplication topoSet
 
 # Create the wave probes
-runApplication waveGaugesNProbes
+runApplication waveGaugesNProbes  #该函数设置波高计，用于监测波高
 
 # Compute the wave parameters
 runApplication setWaveParameters  #该函数从constant/waveProperties.input中读取参数，并计算derived参数，写出到
 				  #constant/waveProperties中
 
 # Set the wave field
-runApplication setWaveField
+runApplication setWaveField	  #该函数
 
-runApplication decomposePar
+#runApplication decomposePar
 
-runParallel waveFoam
+#runParallel waveFoam
 
-runApplication reconstructPar
+#runApplication reconstructPar
 
 touch wave_tank.foam
 

@@ -1,7 +1,7 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  2206                                  |
+|  \\    /   O peration     | Version:  v2106                                 |
 |   \\  /    A nd           | Website:  www.openfoam.com                      |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
@@ -41,8 +41,8 @@ inletCoeffs
         relaxationShape     Rectangular;
         beachType           Empty;
         relaxType           INLET;
-        startX              ( 0 0 -1 );
-        endX                ( 10 0 1 );
+        startX              ( 0 -0.1 0 );
+        endX                ( 10 5.1 0 );
         orientation         ( 1 0 0 );
     }
 }
@@ -59,8 +59,8 @@ outletCoeffs
         relaxationShape     Rectangular;
         beachType           Empty;
         relaxType           OUTLET;
-        startX              ( 72 0 -1 );
-        endX                ( 82 0 1 );
+        startX              ( 72 -0.1 0 );
+        endX                ( 82 5.1 0 );
         orientation         ( 1 0 0 );
     }
 }

@@ -14,15 +14,18 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-seaLevel	1.89;
+seaLevel	1.89;  //水平面的y坐标	
 
-seaLevelAsReference true;
+seaLevelAsReference true;   //是否将水平面设为参考系原点
+                            //用于setWaveField中计算压力场，若为true则自由面以下压力为0，若为false则自由面
+                            //以下压力为参考系的静压值
+                            //对于p_rgh，初始时刻计算域应为0，因此应为true
 
 // A list of the relaxation zones in the simulation. The parameters are given
 // in <name>Coeffs below.
-relaxationNames (inlet outlet);
+relaxationNames (inlet outlet);   
 
-initializationName outlet;
+initializationName outlet;  //用于setWaveField，采用相应的波浪理论中初始化U、p、alpha1
 
 inletCoeffs
 {
@@ -30,24 +33,24 @@ inletCoeffs
     waveType    stokesFifth;  
     
     // Ramp time of 2 s
-    Tsoft       2.5;
+    Tsoft       2.5;    //松弛区内变量由0过渡至相应波浪理论的时间，默认取为周期
 
     // Water depth at the boundary and in the relaxation zone
-    depth       1.89;
+    depth       1.89;	//水深，即自由面至底部的距离
 
     // Wave period
-    period      2.5;
+    period      2.5;    //setWaveProperties命令中由period计算omega，并输出至waveProperties文件
 
     // Phase shift in the wave
-    phi         0.000000;
+    phi         0.000000;  //相位滞后
 
-    stokesDrift 0;
+    stokesDrift 0;  //stokes drift速度，对于两端闭合的水槽中进行的试验为0
 
     // Wave number vector, k. 
-    direction  (1.0 0.0 0.0);
+    direction  (1.0 0.0 0.0);  //波数的方向，setWaveProperties命令中会进行正则化，因此量值可任意设置
 
     // Wave height
-    height      0.63;
+    height      0.63;  
     
     // Specifications on the relaxation zone shape and relaxation scheme
     relaxationZone
@@ -56,17 +59,20 @@ inletCoeffs
         relaxationShape  Rectangular;
         beachType        Empty;
         relaxType   INLET;
-        startX      (0 0.0 -1);
-        endX        (10 0.0  1);
-        orientation      (1.0 0.0 0.0);
+        startX      (0  -0.1 0);    //对应矩形中的0#点
+        endX        (10 5.1  0);   //对应矩形中的2#点
+        			   //对于自由面与水平面平行的情况，仅依靠x和y坐标判断松弛区，z坐标无影响
+				   //松弛区的高度应覆盖inlet的高度
+				   //inlet应沿正x轴方向设置
+	orientation      (1.0 0.0 0.0);  //x轴方向的矢量，会进行正则化，因此量值可任意设置
     }
 };
 
 outletCoeffs
 {
     waveType    potentialCurrent;
-    U           (0 0 0);
-    Tsoft       2.5;
+    U           (0 0 0);  //对应松弛区内水的速度
+    Tsoft       2.5;	  //松弛区内变量由0过渡至相应波浪理论的时间
 
     relaxationZone
     {
@@ -75,9 +81,12 @@ outletCoeffs
         beachType        Empty;    
 
         relaxType   OUTLET;
-        startX      (72 0.0 -1);
-        endX        (82 0.0  1);
-        orientation      (1.0 0.0 0.0);
+        startX      (72 -0.1 0);  //对应矩形中的0#点
+        endX        (82 5.1  0);  //对应矩形中的2#点
+				  //对于自由面与水平面平行的情况，仅依靠x和y坐标判断松弛区，z坐标无影响
+				  //松弛区的高度应覆盖outlet的高度
+				  //outlet应沿正x轴方向设置
+        orientation      (1.0 0.0 0.0);  //x轴方向的矢量，会进行正则化，因此量值可任意设置
     }
 };
 
